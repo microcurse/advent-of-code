@@ -1,3 +1,3 @@
-# Advent of Code 2022
+# Advent of Code
 
-Work for Advent of Code 2022
+My work for Advent of Code. Starting fresh with 2024.
