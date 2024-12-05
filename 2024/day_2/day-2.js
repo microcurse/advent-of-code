@@ -57,6 +57,51 @@
  * - Iteration completes with only "safe" designations, increment "safe count" variable by 1.
  * - Return safe count
  * 
+ * 
+ * PART 2 PEDAC
+ * Understanding the Problem
+ * The program can tolerate a single "bad level" in a report. Rewrite it so that if it removes a singular bad level (number/element) in the report, it would still consider the report safe.
+ * 
+ * Inputs: Array of numbers -> [1, 2, 7, 8, 9] "Unsafe because 2 and 7 is an increase of 5" 
+ * What transformations need to happen?
+ * - When coming across an unsafe report, remove a singular element.
+ *  - The element that is removed should be the first of two elements that cause an unsafe difference.
+ * - Recheck if that report is considered safe after removing either elements that had an unsafe difference.
+ * - If not, the report should still be considered unsafe
+ * - If yes, report should now be considered safe.
+ * 
+ * Step 1: [1, 2, 7, 8, 9] // 2 and 7 are unsafe
+ * Step 2: [1, 7, 8, 9] // remove 2 and check isValidRange
+ * Step 3: [1, 2, 8, 9] // Put 2 back and remove 7 and check isValidRange
+ * Step 4: false // Still unsafe
+ * 
+ * Data Structures
+ * - How can I transform current data into desired data?
+ * - What array methods fit these transformations?
+ * 
+ * map()    // transform each element
+ * filter() // select elements
+ * reduce() // accumulate/combine
+ * every()  // check all elements
+ * some()   // check any elements
+ * 
+ * input -> transform1 -> transform2 -> output
+ * numbers -> remove element -> get difference -> check safety
+ * [1,2,7,8,9] -> [1,7,8,9] -> [-6,-1,-1] -> false
+ * 
+ * numbrtd
+ * -> generate all possible arrays with one removal
+ * -> test each array for safety
+ * -> check if any array is safe
+ * 
+ * map() // generate arrays with removals
+ * some() // will check if any modified array is safe
+ * filter() // get arrays that pass safety check
+ * reduce() // combine results
+ * 
+ * Algorithm
+ * - report.
+ * 
  */
 
 const rawData = `16 17 18 21 23 24 27 24
@@ -1088,15 +1133,25 @@ const hasSameTrend = (diffs) => {
   return diffs.every(d => (d > 0) === (firstDiff > 0));
 }
 
+const removeOneElement = (numbers) => {
+  return numbers.map((_, idx) => {
+    return numbers.filter((_, i) => i !== idx);
+  });
+}
+
+const canBeMadeSafe = (numbers) => {
+  return removeOneElement(numbers).some(isSafeSequence);
+}
+
 const isSafeSequence = (numbers) => {
   const diffs = getDifferences(numbers);
   return diffs.every(isValidRange) && hasSameTrend(diffs);
 }
 
-const countSafeReports = (reports) => {
-  const safeReports = reports.filter(isSafeSequence);
-  safeReports.forEach(report => console.log("Safe report found:", report));
-  return safeReports.length;
-}
+const countSafeReportsWithRemoval = (reports) => {
+  return reports.filter(report => 
+    isSafeSequence(report) || canBeMadeSafe(report)
+  ).length;
+};
 
-console.log(countSafeReports(data));
+console.log(countSafeReportsWithRemoval(data));
