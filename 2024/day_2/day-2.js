@@ -1075,42 +1075,28 @@ const parseData = (dataString) => {
 
 const data = parseData(rawData);
 
-const countSafeReports = (reports) => {
-  let safeCount = 0;
-
-  reports.forEach((report) => {
-    let safeFlag = true;
-    let prevDiff = null;
-
-    for (let idx = 0; idx < report.length - 1; idx++) {
-      const currentDiff = report[idx + 1] - report[idx];
-
-      if (!safeCondition(report[idx], report[idx + 1], prevDiff)) {
-        safeFlag = false;
-        break;
-      }
-
-      prevDiff = currentDiff;
-    }
-    if (safeFlag) {
-      console.log("Safe report found:", report);
-      safeCount++;
-    }
-  });
-
-  return safeCount;
+const isValidRange = (diff) => {
+  return Math.abs(diff) >= 1 && Math.abs(diff) <= 3;
 }
 
-const safeCondition = (curr, next, prevDiff = null) => {
-  if (curr === undefined || next === undefined) return false;
+const getDifferences = (numbers) => {
+  return numbers.slice(1).map((num, i) => num - numbers[i]);
+}
 
-  const diff = next - curr;
+const hasSameTrend = (diffs) => {
+  const firstDiff = diffs[0];
+  return diffs.every(d => (d > 0) === (firstDiff > 0));
+}
 
-  if (Math.abs(diff) < 1 || Math.abs(diff) > 3) return false;
-  if (prevDiff === null) return true;
-  if (diff === 0) return false;
+const isSafeSequence = (numbers) => {
+  const diffs = getDifferences(numbers);
+  return diffs.every(isValidRange) && hasSameTrend(diffs);
+}
 
-  return (diff > 0) === (prevDiff > 0);
+const countSafeReports = (reports) => {
+  const safeReports = reports.filter(isSafeSequence);
+  safeReports.forEach(report => console.log("Safe report found:", report));
+  return safeReports.length;
 }
 
 console.log(countSafeReports(data));
