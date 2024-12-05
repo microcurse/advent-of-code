@@ -1130,7 +1130,7 @@ const getDifferences = (numbers) => {
 
 const hasSameTrend = (diffs) => {
   const firstDiff = diffs[0];
-  return diffs.every(d => (d > 0) === (firstDiff > 0));
+  return diffs.every(diff => (diff > 0) === (firstDiff > 0));
 }
 
 const removeOneElement = (numbers) => {
