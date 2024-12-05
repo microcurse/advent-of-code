@@ -136,9 +136,7 @@ const isSafeSequence = (numbers) => {
 }
 
 const countSafeReportsWithRemoval = (reports) => {
-  return reports.filter(report => 
-    isSafeSequence(report) || canBeMadeSafe(report)
-  ).length;
+  return reports.filter(report => isSafeSequence(report) || canBeMadeSafe(report)).length;
 };
 
 console.log(countSafeReportsWithRemoval(data));
